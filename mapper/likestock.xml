@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- id: (...)
+memberId: (...)
+predictDay: (...)
+predictGraph: (...)
+predictId: (...)
+predictMonth: (...)
+predictYear: (...)
+stockName: (...)
+stockYesterday: (...) -->
+<mapper namespace="LikeStockMapper">
+
+	<select id="readLikeStock" > 
+		select m.id, member_id, predict_day, predict_graph, predict_id, predict_month, predict_year, stock_name, stock_yesterday
+		from likeStock m
+		join predict p
+		on m.predict_id = p.id
+		join stock s on m.predict_id = s.id
+		where member_id = #{memberId}
+	</select>
+	
+	<insert id="createLikeStock">
+		insert into likeStock(member_id, predict_id)
+		select #{memberId}, #{predictId} from dual
+		where not exists(
+			select member_id, predict_id from likeStock
+			where member_id=#{memberId} and predict_id = #{predictId})
+		
+	</insert>
+	
+	<delete id="deleteLikeStock">
+		delete
+		from likeStock
+		where member_id=#{memberId} and predict_id=#{predictId};
+	</delete>
+
+</mapper>
