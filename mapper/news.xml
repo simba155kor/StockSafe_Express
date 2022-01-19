@@ -19,7 +19,7 @@
 
 	
 	<delete id="deleteNews" >
-		delete from stock
+		delete from news
 		where news_date=#{date}
 	</delete>
  

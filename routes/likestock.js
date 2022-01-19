@@ -1,6 +1,12 @@
-let mysql = require("../lib/mysql.js");
-var express = require('express');
+var express = require("express");
 var router = express.Router();
+var util = require("../lib/util");
+let mysql = require("../lib/mysql.js");
+var mybatisMapper = require("mybatis-mapper");
+
+mybatisMapper.createMapper(["./mapper/likestock.xml"]);
+
+var db = mysql.db;
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -31,17 +37,16 @@ router.get('/', function(req, res, next) {
 
 router.post('/', function(req, res) {
   let body = req.body;
-  body = JSON.parse(body);
+
   var format = { language: "sql", indent: "  " };
-  
   var query = mybatisMapper.getStatement(
     "LikeStockMapper",
     "createLikeStock",
-    nody,
+    body,
     format
         );
 
-  mysql.db.query(query, function (error, results, fields) {
+  db.query(query, function (error, results, fields) {
     //조회
     if (error) {
       console.log(error);
@@ -73,10 +78,9 @@ router.delete('/', function(req, res, next) {
           if (error) {
             console.log(error);
           }
-          response.writeHead(200, this.headers);
           var string = JSON.stringify(results);
           var string2 = util.snakeToCamel(string);
-          response.send(string2);
+          res.send(string2);
         });
 });
 

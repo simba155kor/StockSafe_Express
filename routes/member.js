@@ -78,7 +78,7 @@ router.post("/login", function (req, res) {
   });
 });
 
-router.put("/", function (req, res, next) {
+router.put("/edit", function (req, res, next) {
   var param = req.body;
 
   //질의문 형식
