@@ -24,7 +24,6 @@ router.get('/', function(req, res, next) {
   let param = {
     id: req.query.id  };
 
-
   //질의문 형식
   let format = { language: "sql", indent: "  " };
   let query = mybatisMapper.getStatement(
@@ -86,53 +85,41 @@ router.get('/searchAll', function(req, res, next) {
 
 /* updateStock */
 router.put('/updateStock', function(req, res, next) {
-  // swagger가 없어서 현제 테스트 불가
-  let body = [];
-  req
-    .on("data", (chunk) => {
-      body.push(chunk);
-    })
-    .on("end", () => {
-      // 여기서 `body`에 전체 요청 바디가 문자열로 담겨있습니다.
-      body = Buffer.concat(body).toString();
-      body = JSON.parse(body);
-      db.query(
-        `
-        update stock
-        set stock_name=?, stock_market=?, stock_sector=?,
-        stock_wics=?, stock_marketcap=?, stock_count=?,
-        stock_foreigner=?, stock_per=?, stock_pbr=?, stock_bps=?,
-        stock_divyield =?
-        where id=?`,
-        [
-          body.stockName,
-          body.stockMarket,
-          body.stockSector,
-          body.stockWics,
-          body.stockMarketcap,
-          body.stockCount,
-          body.stockForeigner,
-          body.stockPer,
-          body.stockPbr,
-          body.stockBps,
-          body.stockDivyield,
-          body.id,
-        ],
-        function (error, data) {
-          if (data === 1) {
-            // success
-            res.writeHead(200, this.headers);
-            res.write(this.SUCCESS);
-            res.end();
-          } else {
-            // fail
-            res.writeHead(204, this.headers);
-            res.write(this.FAIL);
-            res.end();
-          }
-        }
-      );
-    });
+  console.log("updateStock 비어있음");
 });
+
+/* deleteStock */
+// TODO : mystock, likestock등 외래키 설정 때문에 바로는 안지워진다.
+// 연관된 mystock, likestock부터 지워야...
+router.delete('/', function(req, res, next) {
+  let param = {
+    id: req.query.id,
+  };
+
+  let format = { language: "sql", indent: " " };
+  let query = mybatisMapper.getStatement(
+    "StockMapper",
+    "deleteStock",
+    param,
+    format
+  );
+
+  db.query(query, function (error, results, field) {
+    
+    if (data.length === 1) {
+      // success
+      console.log("12");
+      res.writeHead(200, this.headers);
+      res.end();
+    } else {
+      // fail
+      console.log("13");
+      res.writeHead(204, this.headers);
+      res.write(this.FAIL);
+      res.end();
+    }
+  });
+});
+
 
 module.exports = router;
